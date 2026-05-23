@@ -16,10 +16,10 @@ import {
 
 const navItems = [
   { label: 'Home', href: '/', icon: Home },
-  { label: 'My Groups', href: '/groups', icon: Users },
+  { label: 'My Groups', href: '#groups', icon: Users },
   { label: 'Assignments', href: '/assignments', icon: FileText, badge: 0 },
-  { label: "AI Teacher's Toolkit", href: '/toolkit', icon: Sparkles },
-  { label: 'My Library', href: '/library', icon: BookOpen },
+  { label: "AI Teacher's Toolkit", href: '#toolkit', icon: Sparkles },
+  { label: 'My Library', href: '#library', icon: BookOpen },
 ];
 
 interface SidebarProps {
@@ -80,10 +80,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
             const Icon = item.icon;
 
             return (
-              <li key={item.href}>
+              <li key={item.label}>
                 <Link
                   href={item.href === '/assignments' ? '/' : item.href}
                   onClick={onClose}
+                  prefetch={false}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm transition-all ${
                     isActive
                       ? 'text-text-primary font-bold bg-[#F2EDE9] text-[#C4704B]'
@@ -107,8 +108,9 @@ export default function Sidebar({ onClose }: SidebarProps) {
       {/* Settings */}
       <div className="px-4 pb-2 border-b border-border/40">
         <Link
-          href="/settings"
+          href="#settings"
           onClick={onClose}
+          prefetch={false}
           className="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm text-text-secondary hover:text-text-primary hover:bg-gray-50 transition-colors"
         >
           <Settings className="w-5 h-5 text-text-muted" />
