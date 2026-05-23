@@ -36,6 +36,7 @@ export default function CreateAssignmentPage() {
 
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [serverWaking, setServerWaking] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dragActive, setDragActive] = useState(false);
 
@@ -157,6 +158,9 @@ export default function CreateAssignmentPage() {
     if (!validateForm()) return;
 
     setSubmitting(true);
+    setServerWaking(false);
+    // Show wake-up banner after 4s if still waiting
+    const wakeTimer = setTimeout(() => setServerWaking(true), 4000);
     try {
       const payload = {
         ...formData,
@@ -166,14 +170,17 @@ export default function CreateAssignmentPage() {
       };
 
       const result = await createAssignment(payload);
+      clearTimeout(wakeTimer);
       setCurrentAssignmentId(result.assignmentId);
       setCurrentJobId(result.jobId);
       setJobStatus('queued');
       resetForm();
       router.push(`/assignments/${result.assignmentId}/status`);
     } catch (error) {
+      clearTimeout(wakeTimer);
+      setServerWaking(false);
       console.error('Failed to create assignment:', error);
-      setErrors({ submit: 'Failed to create assignment. Please check that your server and database are running.' });
+      setErrors({ submit: 'Failed to create assignment. The server may have timed out — please try again.' });
     } finally {
       setSubmitting(false);
     }
@@ -361,6 +368,14 @@ export default function CreateAssignmentPage() {
           </div>
         )}
 
+        {/* Server waking up banner */}
+        {serverWaking && (
+          <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-amber-400 animate-pulse flex-shrink-0" />
+            <p className="text-xs font-semibold text-amber-700">Server is waking up — this may take 30–60 seconds on first use. Please wait...</p>
+          </div>
+        )}
+
         {/* Footer Navigation Buttons */}
         <div className="flex items-center justify-between px-2">
           <button
@@ -378,7 +393,7 @@ export default function CreateAssignmentPage() {
             disabled={submitting}
             className="flex items-center gap-2 px-7 py-3 bg-[#111111] hover:bg-[#222222] text-white rounded-full text-xs font-bold uppercase tracking-wider shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 border border-white/5 cursor-pointer"
           >
-            {submitting ? 'Creating...' : 'Next'}
+            {submitting ? (serverWaking ? 'Waking server...' : 'Creating...') : 'Next'}
             {!submitting && <ChevronRight className="w-4 h-4 stroke-[2.5px]" />}
           </button>
         </div>

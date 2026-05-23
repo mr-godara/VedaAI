@@ -3,6 +3,7 @@ import type { Assignment, AssignmentFormData, GeneratedPaper } from '@/types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
+  timeout: 90000, // 90s to survive Render cold boot (30-60s wake-up time)
   headers: {
     'Content-Type': 'application/json',
   },

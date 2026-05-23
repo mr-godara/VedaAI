@@ -19,8 +19,10 @@ import {
 export default function DashboardPage() {
   const { assignments, setAssignments } = useAssignmentStore();
   const [loading, setLoading] = useState(true);
+  const [serverWaking, setServerWaking] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,10 +31,14 @@ export default function DashboardPage() {
 
   async function fetchAssignments() {
     try {
+      // Show wake-up banner after 3s (Render cold start detection)
+      const wakeTimer = setTimeout(() => setServerWaking(true), 3000);
       const data = await getAssignments();
+      clearTimeout(wakeTimer);
+      setServerWaking(false);
       setAssignments(data);
     } catch {
-      // API might not be running yet, show empty state
+      setServerWaking(false);
       setAssignments([]);
     } finally {
       setLoading(false);
@@ -40,13 +46,18 @@ export default function DashboardPage() {
   }
 
   async function handleDelete(id: string) {
+    setDeletingId(id);
+    setMenuOpen(null);
     try {
       await deleteAssignment(id);
       setAssignments(assignments.filter((a) => a._id !== id));
     } catch (error) {
       console.error('Failed to delete assignment:', error);
+      // Refresh from server to get true state
+      fetchAssignments();
+    } finally {
+      setDeletingId(null);
     }
-    setMenuOpen(null);
   }
 
   const filteredAssignments = assignments.filter((a) =>
@@ -57,6 +68,12 @@ export default function DashboardPage() {
     return (
       <AppLayout title="Assignment">
         <div className="p-4 md:p-6">
+          {serverWaking && (
+            <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-amber-400 animate-pulse" />
+              <p className="text-xs font-semibold text-amber-700">Server is waking up (free tier) — this may take 30–60 seconds...</p>
+            </div>
+          )}
           <LoadingSkeleton />
         </div>
       </AppLayout>
@@ -111,6 +128,7 @@ export default function DashboardPage() {
               key={assignment._id}
               assignment={assignment}
               menuOpen={menuOpen === assignment._id}
+              isDeleting={deletingId === assignment._id}
               onMenuToggle={() =>
                 setMenuOpen(menuOpen === assignment._id ? null : assignment._id)
               }
@@ -201,6 +219,7 @@ function EmptyIllustration() {
 interface AssignmentCardProps {
   assignment: Assignment;
   menuOpen: boolean;
+  isDeleting: boolean;
   onMenuToggle: () => void;
   onView: () => void;
   onDelete: () => void;
@@ -209,6 +228,7 @@ interface AssignmentCardProps {
 function AssignmentCard({
   assignment,
   menuOpen,
+  isDeleting,
   onMenuToggle,
   onView,
   onDelete,
@@ -223,7 +243,15 @@ function AssignmentCard({
   };
 
   return (
-    <div className={`bg-white rounded-2xl border border-gray-100 p-5 relative animate-fade-in hover:shadow-md hover:border-gray-200/80 transition-all duration-300 ${menuOpen ? 'z-30' : 'z-0'}`}>
+    <div className={`bg-white rounded-2xl border border-gray-100 p-5 relative animate-fade-in hover:shadow-md hover:border-gray-200/80 transition-all duration-300 ${menuOpen ? 'z-30' : 'z-0'} ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}>
+      {isDeleting && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-2xl z-40">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-semibold text-text-secondary">Deleting...</span>
+          </div>
+        </div>
+      )}
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0 pr-4">
           <h3 className="font-extrabold text-text-primary text-base md:text-lg mb-4 tracking-tight truncate font-outfit">
