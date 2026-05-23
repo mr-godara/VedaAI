@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
+import DifficultyBadge from '@/components/DifficultyBadge';
 import { useAssignmentStore } from '@/store/assignmentStore';
 import { getAssignment, getResult, regenerateAssignment, downloadPdf } from '@/lib/api';
 import type { GeneratedPaper, Assignment } from '@/types';
@@ -292,10 +293,13 @@ function ExamPaper({ paper, assignment }: ExamPaperProps) {
                       )}
                     </div>
 
-                    {/* Question Marks indicator */}
-                    <span className="text-xs font-bold text-text-secondary whitespace-nowrap bg-gray-50 px-2.5 py-1 rounded-md border border-gray-100">
-                      {question.marks} {question.marks === 1 ? 'Mark' : 'Marks'}
-                    </span>
+                    {/* Question Meta indicators */}
+                    <div className="flex flex-col items-end gap-1.5">
+                      <DifficultyBadge difficulty={question.difficulty} />
+                      <span className="text-xs font-bold text-text-secondary whitespace-nowrap bg-gray-50 px-2.5 py-1 rounded-md border border-gray-100 shadow-sm">
+                        {question.marks} {question.marks === 1 ? 'Mark' : 'Marks'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}

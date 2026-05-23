@@ -32,7 +32,7 @@ export interface Question {
   questionNumber: number;
   text: string;
   type: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'easy' | 'moderate' | 'hard';
   marks: number;
   options?: string[];
 }
