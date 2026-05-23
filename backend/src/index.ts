@@ -24,7 +24,26 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Middleware
-app.use(cors({ origin: env.CORS_ORIGIN }));
+const allowedOrigins = [
+  env.CORS_ORIGIN,
+  'http://localhost:3000',
+  'https://veda-ai-liard.vercel.app',
+].filter(Boolean);
+
+console.log('CORS allowed origins:', allowedOrigins);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.warn('CORS blocked origin:', origin);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // Routes
