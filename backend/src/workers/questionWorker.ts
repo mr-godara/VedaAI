@@ -59,7 +59,11 @@ export const questionWorker = new Worker(
       await assignment.save();
 
       // Cache result
-      await redis.setex(`paper:${assignment._id}`, 3600, JSON.stringify(paper));
+      try {
+        await redis.setex(`paper:${assignment._id}`, 3600, JSON.stringify(paper));
+      } catch (redisErr) {
+        console.warn('Failed to cache paper to Redis:', redisErr);
+      }
 
       emitToJob(job.id!, { type: 'JOB_COMPLETE', payload: { assignmentId: assignment._id } });
 

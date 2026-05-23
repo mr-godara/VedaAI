@@ -5,7 +5,7 @@ const QuestionSchema = new Schema({
   questionNumber: { type: Number, required: true },
   text: { type: String, required: true },
   type: { type: String, required: true },
-  difficulty: { type: String, enum: ['easy', 'medium', 'hard'] },
+  difficulty: { type: String, enum: ['easy', 'moderate', 'hard'] },
   marks: { type: Number, required: true },
   options: [{ type: String }],
 }, { _id: false });

@@ -62,7 +62,13 @@ export const getResult = async (req: Request, res: Response, next: NextFunction)
     
     // Check Redis cache first
     const cacheKey = `paper:${id}`;
-    const cached = await redis.get(cacheKey);
+    let cached = null;
+    try {
+      cached = await redis.get(cacheKey);
+    } catch (redisErr) {
+      console.warn('Redis cache miss/error:', redisErr);
+      // Fallback to DB smoothly
+    }
     
     if (cached) {
       return res.status(200).json(JSON.parse(cached));
