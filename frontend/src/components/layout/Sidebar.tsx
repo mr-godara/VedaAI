@@ -129,6 +129,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
             <p className="text-[10px] font-semibold text-text-muted truncate">Bokaro Steel City</p>
           </div>
         </div>
+        {/* Debug Indicator - Safe to remove later */}
+        <p className="text-[8px] text-gray-300 mt-2 text-center break-all">
+          API: {process.env.NEXT_PUBLIC_API_URL || 'default'}
+        </p>
       </div>
     </aside>
   );
