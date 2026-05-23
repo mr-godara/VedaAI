@@ -7,6 +7,7 @@ import { generatePdf } from '../services/pdfService';
 
 export const createAssignment = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.log('[DEBUG] createAssignment started');
     const data = req.body;
     
     const newAssignment = new Assignment({
@@ -14,20 +15,27 @@ export const createAssignment = async (req: Request, res: Response, next: NextFu
       status: 'pending',
     });
 
+    console.log('[DEBUG] Saving new assignment to MongoDB...');
     await newAssignment.save();
+    console.log('[DEBUG] Successfully saved assignment to MongoDB:', newAssignment._id);
 
+    console.log('[DEBUG] Adding job to Redis queue...');
     const job = await questionQueue.add('generate-questions', {
       assignmentId: newAssignment._id,
     });
+    console.log('[DEBUG] Successfully added job to Redis queue:', job.id);
 
     newAssignment.jobId = job.id;
+    console.log('[DEBUG] Updating assignment with jobId...');
     await newAssignment.save();
+    console.log('[DEBUG] Successfully updated assignment. Sending response.');
 
     res.status(201).json({
       assignmentId: newAssignment._id,
       jobId: job.id,
     });
   } catch (error) {
+    console.error('[DEBUG] Error inside createAssignment:', error);
     next(error);
   }
 };
