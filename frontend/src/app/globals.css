@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #EBEBEB;
+  --foreground: #111111;
+  --surface: #FFFFFF;
+  --header-bg: #FFFFFF;
+  --primary: #C4704B;
+  --primary-hover: #A5502E;
+  --primary-light: rgba(196, 112, 75, 0.08);
+  --dark-cta: #111111;
+  --dark-cta-hover: #222222;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --border: #E8E8E8;
+  --border-dashed: #CCCCCC;
+  --badge-red: #FF4A4A;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --sidebar-width: 260px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-header-bg: var(--header-bg);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-dark-cta: var(--dark-cta);
+  --color-dark-cta-hover: var(--dark-cta-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-border-dashed: var(--border-dashed);
+  --color-badge-red: var(--badge-red);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: 'Inter', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+/* Print styles for exam paper */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}
+
+/* Floating Card Styles matching Figma */
+.floating-card-sidebar {
+  background: #FFFFFF;
+  border-radius: 28px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.015);
+}
+
+.floating-card-header {
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: 0px 4px 18px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.01);
+}
+
+/* Button orange glowing border */
+.glowing-create-btn {
+  background: #111111;
+  color: #FFFFFF;
+  border: 2px solid #C4704B;
+  transition: all 0.25s ease-out;
+  box-shadow: 0px 4px 12px rgba(196, 112, 75, 0.15);
+}
+
+.glowing-create-btn:hover {
+  background: #222222;
+  box-shadow: 0px 6px 16px rgba(196, 112, 75, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
