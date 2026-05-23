@@ -43,7 +43,12 @@ app.use(cors({
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Explicit preflight handler for all routes
+app.options('*', cors());
 app.use(express.json());
 
 // Routes

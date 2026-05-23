@@ -145,7 +145,7 @@ export const deleteAssignment = async (req: Request, res: Response, next: NextFu
       await GeneratedPaper.deleteMany({ assignmentId: id });
       await redis.del(`paper:${id}`);
   
-      res.status(204).send();
+      res.status(200).json({ message: 'Assignment deleted successfully' });
     } catch (error) {
       next(error);
     }

@@ -46,8 +46,28 @@ export default function StatusPage({ params }: PageProps) {
       })
       .catch(console.error);
 
+    // Polling fallback: check status every 5s in case WebSocket fails
+    const pollInterval = setInterval(async () => {
+      try {
+        const assignment = await getAssignment(id);
+        if (assignment.status === 'completed') {
+          setJobStatus('done');
+          clearInterval(pollInterval);
+          setTimeout(() => router.push(`/assignments/${id}/result`), 1500);
+        } else if (assignment.status === 'failed') {
+          setJobStatus('failed');
+          clearInterval(pollInterval);
+        } else if (assignment.status === 'processing') {
+          setJobStatus('processing');
+        }
+      } catch {
+        // Ignore polling errors
+      }
+    }, 5000);
+
     return () => {
       wsClient.disconnect();
+      clearInterval(pollInterval);
     };
   }, [id]);
 
