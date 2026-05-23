@@ -78,6 +78,8 @@ export const questionWorker = new Worker(
   {
     connection: {
       url: env.REDIS_URL,
+      enableOfflineQueue: false,
+      maxRetriesPerRequest: null,
     },
   }
 );
