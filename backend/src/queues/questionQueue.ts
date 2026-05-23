@@ -1,10 +1,6 @@
 import { Queue } from 'bullmq';
-import { env } from '../config/env';
+import { redis } from '../config/redis';
 
 export const questionQueue = new Queue('question-generation', {
-  connection: {
-    url: env.REDIS_URL,
-    enableOfflineQueue: false,
-    maxRetriesPerRequest: null,
-  },
+  connection: redis,
 });
